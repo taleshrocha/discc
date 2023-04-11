@@ -2,14 +2,12 @@ import React, { memo, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 
 function CustomNode({ data }) {
-  const [isDone, setIsDone] = useState(false)
   return (
     <button 
       className={`flex flex-col px-2 py-1 w-44 h-20
       shadow-md rounded-md border-2 border-stone-400 
-      ${isDone? "bg-neutral-100" : "bg-zinc-300"}
+      ${data.selected? "bg-neutral-100" : "bg-zinc-300"}
     `}
-      onClick={() => setIsDone(!isDone)}
     >
       <div>
           <p className="text font-bold">{data.code} ({data.hours})</p>

@@ -1,4 +1,9 @@
-import ReactFlow, { MiniMap, Controls } from "reactflow";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  useNodesState,
+  useEdgesState,
+} from "reactflow";
 import Head from "next/head";
 
 import "reactflow/dist/base.css";
@@ -23,6 +28,7 @@ for (let id = 0; id < disciplines.length; id++) {
     x = 0;
     y = 600;
   }
+  disciplines[id].selected = false;
   initNodes.push({
     id: id.toString(),
     type: "custom",
@@ -61,6 +67,9 @@ const initEdges = [
 ];
 
 export default function App() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
+
   return (
     <>
       <Head>
@@ -72,13 +81,23 @@ export default function App() {
 
       <main style={{ width: "100vw", height: "100vh" }}>
         <ReactFlow
-          nodes={initNodes}
-          edges={initEdges}
-          onNodeClick={(e, node) => {
-            console.log("Node id:", node.id);
-            edges.forEach((edge) => {
-              console.log(edge.target == node.id);
-            });
+          nodes={nodes}
+          edges={edges}
+          onNodeClick={(event, node) => {
+            // Updates all nodes
+            setNodes((nds) =>
+              nds.map((n) => {
+                if (n.id === node.id) {
+                  // Check if parentes are selected
+
+                  // it's important that you create a new object here
+                  // in order to notify react flow about the change
+                  n.data = { ...n.data, selected: !n.data.selected };
+                }
+
+                return n;
+              })
+            );
           }}
           nodeTypes={nodeTypes}
           fitView
